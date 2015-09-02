@@ -3,7 +3,35 @@
 <head>
   <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
   <title>パスワードジェネレーター</title>
+  <script src="md5.js"></script>
   <script>
+    function genPassword(key, opt_n, opt_A, opt_a, opt_sym, syms){
+      var chars="", result="";
+      if (opt_n) {
+        chars = "0123456789";
+      }
+      if (opt_A) {
+        chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      }
+      if (opt_a) {
+        chars += "abcdefghijklmnopqrstuvwxyz";
+      }
+      if (opt_sym) {
+        chars += syms;
+      }
+      if (chars.length == 0) {
+        return false;
+      }
+      else {
+        var key_md5 = MD5_hash(key);
+        var pointer = 0;
+        for (var i = 0; i < 16; i++) {
+          pointer = (pointer + key_md5.charCodeAt(i)) % chars.length;
+          result += chars[pointer];
+        }
+        return result;
+      }
+    }
     function output(){
       var key = document.form.key1.value;
       if (key != document.form.key2.value) {
