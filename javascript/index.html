@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+  <title>パスワードジェネレーター</title>
+  <script src="md5.js"></script>
+  <script>
+    function genPassword(key, opt_n, opt_A, opt_a, opt_sym, syms){
+      var chars="", result="";
+      if (opt_n) {
+        chars = "0123456789";
+      }
+      if (opt_A) {
+        chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      }
+      if (opt_a) {
+        chars += "abcdefghijklmnopqrstuvwxyz";
+      }
+      if (opt_sym) {
+        chars += syms;
+      }
+      if (chars.length == 0) {
+        return false;
+      }
+      else {
+        var key_md5 = MD5_hash(key);
+        var pointer = 0;
+        for (var i = 0; i < 16; i++) {
+          pointer = (pointer + key_md5.charCodeAt(i)) % chars.length;
+          result += chars[pointer];
+        }
+        return result;
+      }
+    }
+    function output(){
+      var key = document.form.key1.value;
+      if (key != document.form.key2.value) {
+        alert("2つのキーが違っています。");
+      }
+      else {
+        var opts = new Array(5);
+        for (var i = 0; i < 4; i++) {
+          opts[i] = document.getElementsByName("opt"+i.toString())[0].checked;
+        }
+        opts.push(document.form.opt4.value)
+        opts.unshift(key);
+        document.form.outBox.value = genPassword.apply(this, opts);
+      }
+    }
+  </script>
+</head>
+<body>
+  <form name="form">
+    <table>
+      <tr><td>キーワード</td><td colspan=2><input type="password" name="key1"></td></tr>
+      <tr><td>確認用</td><td colspan=2><input type="password" name="key2"></td></tr>
+      <tr>
+        <td><input type="checkbox" name="opt0" checked>数字</td>
+        <td><input type="checkbox" name="opt1" checked>英大字</td>
+        <td><input type="checkbox" name="opt2" checked>英小字</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" name="opt3">記号</td>
+        <td colspan=2><input type="text" value="!#$%&()*+-./:;<=>?@[\]^_`{|}~" name="opt4"></td>
+      </tr>
+      <tr><td></td><td colspan=2><input type="button" value="▼生成▼" onClick="output()"></td></tr>
+      <tr><td>生成結果</td><td colspan=2><input type="text" name="outBox" readonly value=""></td></tr>
+    </table>
+    <br>
+  </form>
+</body>
+</html>
